@@ -1,5 +1,5 @@
 import flet as ft
-from src.app_controller import AppController
+from src.controller.app_controller import AppController
 
 def main(page: ft.Page):
     app = AppController()
@@ -7,3 +7,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.app(target=main)
+
