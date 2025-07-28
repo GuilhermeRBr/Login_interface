@@ -3,7 +3,6 @@ from ..components.ui_components import UIComponents
 from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
 
 class ForgotPasswordView:
-    
     def __init__(self, app_controller):
         self.app_controller = app_controller
         self.reset_step = 1

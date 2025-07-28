@@ -1,5 +1,30 @@
 from typing import Dict, Optional
+from sqlalchemy import create_engine, Column, String, Integer, DateTime, func
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
+
+engine = create_engine('sqlite:///storage/data/database.db', echo=True)
+Base = declarative_base()
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+
+class User(Base):
+    __tablename__ = 'users'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(100), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+    def __init__(self, email: str, password: str):
+        self.email = email
+        self.password = password
+    
+    def __repr__(self):
+        return f"<User(email='{self.email}')>"
+
+    
 class UserModel:
     def __init__(self):
         self.users_db: Dict[str, str] = {}
@@ -28,3 +53,4 @@ class UserModel:
     
     def verify_code(self, email: str, code: str) -> bool:
         return self.verification_codes.get(email) == code
+    
