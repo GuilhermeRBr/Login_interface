@@ -1,6 +1,6 @@
 import flet as ft
 from ..components.ui_components import UIComponents
-from ..controller.auth_controller import register_click
+from ..controllers.auth_controller import register_click
 
 class RegisterView:
     def __init__(self, app_controller):

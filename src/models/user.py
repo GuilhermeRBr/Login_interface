@@ -4,9 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-engine = create_engine('sqlite:///storage/data/database.db', echo=True)
+db = create_engine('sqlite:///storage/data/database.db', echo=True)
 Base = declarative_base()
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+SessionLocal = sessionmaker(bind=db, autoflush=False, autocommit=False)
 
 
 class User(Base):

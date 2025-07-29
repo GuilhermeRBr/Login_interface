@@ -1,8 +1,8 @@
 import flet as ft
 from ..models.user import UserModel
-from ..views.login_view import LoginView
-from ..views.register_view import RegisterView
-from ..views.forgot_password_view import ForgotPasswordView
+from ..ui.login_view import LoginView
+from ..ui.register_view import RegisterView
+from ..ui.forgot_password_view import ForgotPasswordView
 from ..utils.colors import Colors
 
 class AppController:

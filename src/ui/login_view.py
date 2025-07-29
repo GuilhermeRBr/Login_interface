@@ -1,6 +1,6 @@
 import flet as ft
 from ..components.ui_components import UIComponents
-from ..controller.auth_controller import login_click
+from ..controllers.auth_controller import login_click
 
 class LoginView:
     def __init__(self, app_controller):
