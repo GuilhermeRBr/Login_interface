@@ -53,17 +53,6 @@ def login_click(e: ControlEvent, view):
 
     print(email, password)
 
-    payload = {
-        "email": email,
-        "password": password
-    }
-
-    url = 'http://127.0.0.1:8000/auth/login'
-
-    response = requests.post(url, json=payload)
-
-    print('Status:', response.status_code)
-    print('Resposta:', response.json())
     if not email or not password:
         view.app_controller.show_snackbar("Preencha todos os campos", error=True)
         return
@@ -72,7 +61,24 @@ def login_click(e: ControlEvent, view):
         view.app_controller.show_snackbar("Email inválido", error=True)
         return
     
-    if view.app_controller.user_model.authenticate_user(email, password):
-        view.app_controller.show_snackbar("Login realizado com sucesso!")
-    else:
-        view.app_controller.show_snackbar("Email ou senha incorretos", error=True)
+    payload = {
+    "email": email,
+    "password": password
+    }
+
+    url = 'http://127.0.0.1:8000/auth/login'
+
+    try:
+        response = requests.post(url, json=payload)
+
+        if response.status_code == 200:
+            view.app_controller.show_snackbar("Login realizado com sucesso!")
+            print('Resposta:', response.json())
+            # Aqui você pode armazenar o token de acesso ou realizar outras ações necessárias
+        elif response.status_code == 401:
+            view.app_controller.show_snackbar("Email ou senha incorretos", error=True)
+        else:
+            view.app_controller.show_snackbar("Erro ao realizar login", error=True)
+    except requests.exceptions.RequestException as e:
+        view.app_controller.show_snackbar("Erro de conexão com o servidor", error=True)
+        print(f"Erro de conexão: {str(e)}")
