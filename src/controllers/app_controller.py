@@ -5,9 +5,11 @@ from ..ui.register_view import RegisterView
 from ..ui.forgot_password_view import ForgotPasswordView
 from ..utils.colors import Colors
 
+
 class AppController:
   
     def __init__(self):
+
         self.page = None
         self.current_view = "login"
         
@@ -29,7 +31,6 @@ class AppController:
         page.window.resizable = False
         page.vertical_alignment = ft.MainAxisAlignment.CENTER
         page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-        
         self.update_view()
     
     def navigate_to(self, view_name: str):
@@ -68,10 +69,10 @@ class AppController:
             return self.forgot_password_view.create_view()
     
     def show_snackbar(self, message: str, error: bool = False):
-        self.page.snack_bar = ft.SnackBar(
+        self.page.open(ft.SnackBar(
             content=ft.Text(message, color=Colors.WHITE),
             bgcolor=Colors.ERROR if error else Colors.BLUE_LIGHT,
             duration=3000
-        )
-        self.page.snack_bar.open = True
+        ))
+        
         self.page.update()

@@ -1,7 +1,6 @@
-# controllers/auth_controller.py
-
 from flet import ControlEvent
 from ..utils.validators import validate_email, validate_password_length, passwords_match
+import requests
 
 def register_click(e: ControlEvent, view):
     email = view.email_field.value or ""
@@ -32,6 +31,18 @@ def register_click(e: ControlEvent, view):
 
     if view.app_controller.user_model.create_user(email, password):
         view.app_controller.show_snackbar("Usuário cadastrado com sucesso!")
+
+        payload = {
+            "email": email,
+            "password": password
+        }
+        url = 'http://127.0.0.1:8000/auth/register'
+        response = requests.post(url, json=payload)
+
+        print('Status:', response.status_code)
+        print('Resposta:', response.json())
+
+
         view.app_controller.navigate_to("login")
     else:
         view.app_controller.show_snackbar("Erro ao cadastrar usuário", error=True)
@@ -41,6 +52,18 @@ def login_click(e: ControlEvent, view):
     password = view.password_field.value or ""
 
     print(email, password)
+
+    payload = {
+        "email": email,
+        "password": password
+    }
+
+    url = 'http://127.0.0.1:8000/auth/login'
+
+    response = requests.post(url, json=payload)
+
+    print('Status:', response.status_code)
+    print('Resposta:', response.json())
     if not email or not password:
         view.app_controller.show_snackbar("Preencha todos os campos", error=True)
         return
