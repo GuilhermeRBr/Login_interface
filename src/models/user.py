@@ -1,12 +1,17 @@
+import os
 from typing import Dict, Optional
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, func
+from dotenv import load_dotenv
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-db = create_engine('sqlite:///storage/data/database.db', echo=True)
+load_dotenv()
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+db = create_engine(DATABASE_URL, echo=True)
 Base = declarative_base()
-SessionLocal = sessionmaker(bind=db, autoflush=False, autocommit=False)
 
 
 class User(Base):

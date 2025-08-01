@@ -26,7 +26,7 @@ class UIComponents:
             on_click=on_click,
             width=width,
             height=45,
-            bgcolor=Colors.PURPLE_DARK if primary else Colors.BLUE_LIGHT,
+            bgcolor=Colors.PURPLE_DARK if primary else Colors.ERROR,
             color=Colors.WHITE,
             style=ft.ButtonStyle(
                 shape=ft.RoundedRectangleBorder(radius=8),

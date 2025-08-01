@@ -6,14 +6,14 @@ class UserSchemas(BaseModel):
     email: str
     password: str
 
-    model_config = ConfigDict(
-        orm_mode=True
-    )
+    model_config = {
+        "from_attributes": True
+    }
 
 class LoginSchemas(BaseModel):
     email: str
     password: str
 
-    model_config = ConfigDict(
-        orm_mode=True
-    )
+    model_config = {
+        "from_attributes": True
+    }
