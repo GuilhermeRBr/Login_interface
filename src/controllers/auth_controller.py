@@ -75,6 +75,8 @@ def login_click(e: ControlEvent, view):
             view.app_controller.show_snackbar("Login realizado com sucesso!")
             print('Resposta:', response.json())
             # Aqui você pode armazenar o token de acesso ou realizar outras ações necessárias
+            view.app_controller.logged_user_email = email
+            view.app_controller.navigate_to("homepage")
         elif response.status_code == 401:
             view.app_controller.show_snackbar("Email ou senha incorretos", error=True)
         else:

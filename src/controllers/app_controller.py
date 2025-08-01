@@ -3,6 +3,7 @@ from ..models.user import UserModel
 from ..ui.login_view import LoginView
 from ..ui.register_view import RegisterView
 from ..ui.forgot_password_view import ForgotPasswordView
+from ..ui.homepage_view import HomepageView
 from ..utils.colors import Colors
 
 
@@ -18,6 +19,9 @@ class AppController:
         self.login_view = LoginView(self)
         self.register_view = RegisterView(self)
         self.forgot_password_view = ForgotPasswordView(self)
+        self.homepage_view = HomepageView(self)
+
+        self.logged_user_email = None
     
     def initialize(self, page: ft.Page):
 
@@ -67,6 +71,8 @@ class AppController:
             return self.register_view.create_view()
         elif self.current_view == "forgot_password":
             return self.forgot_password_view.create_view()
+        elif self.current_view == "homepage":
+            return self.homepage_view.create_view(self.logged_user_email)
     
     def show_snackbar(self, message: str, error: bool = False):
         self.page.open(ft.SnackBar(
