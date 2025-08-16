@@ -1,6 +1,7 @@
 import flet as ft
 from ..components.ui_components import UIComponents
 from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
+from ..controllers.auth_controller import send_code_click
 
 class ForgotPasswordView:
     def __init__(self, app_controller):
@@ -30,7 +31,7 @@ class ForgotPasswordView:
             ft.Container(height=20),
             self.reset_email_field,
             ft.Container(height=20),
-            UIComponents.create_button("Enviar Código", self._on_send_code_click),
+            UIComponents.create_button("Enviar Código", lambda e: send_code_click(e, self)),
             ft.Container(height=15),
             UIComponents.create_text_button("← Voltar ao Login", self._on_back_to_login_click),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)

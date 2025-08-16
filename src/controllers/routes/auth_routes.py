@@ -38,3 +38,14 @@ async def login(login_schema: LoginSchemas, session = Depends(get_session)):
         return {"access_token": access_token,
                 "refresh_token": refresh_token,
                 "token_type": "Bearer"}
+    
+@auth_router.post('/forgot-password')
+async def forgot_password(email: str, session: Session = Depends(get_session)):
+    user = session.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail='Usuário não encontrado')
+    
+    # Aqui você pode implementar a lógica para enviar o e-mail de redefinição de senha
+    # Por exemplo, gerar um código de verificação e enviá-lo por e-mail
+    
+    return {"message": "E-mail de redefinição de senha enviado com sucesso"}

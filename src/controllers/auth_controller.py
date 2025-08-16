@@ -1,5 +1,5 @@
 from flet import ControlEvent
-from ..utils.validators import validate_email, validate_password_length, passwords_match
+from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
 import requests
 
 def register_click(e: ControlEvent, view):
@@ -84,3 +84,25 @@ def login_click(e: ControlEvent, view):
     except requests.exceptions.RequestException as e:
         view.app_controller.show_snackbar("Erro de conexão com o servidor", error=True)
         print(f"Erro de conexão: {str(e)}")
+
+def send_code_click(e: ControlEvent, view):
+    email = view.reset_email_field.value or ""
+
+    print(email)
+
+    if not email:
+        view.app_controller.show_snackbar("Digite seu email", error=True)
+        return
+    if not validate_email(email):
+        view.app_controller.show_snackbar("Email inválido", error=True)
+        return
+    
+    view.app_controller.show_snackbar(f"Se o e-mail estiver cadastrado, enviaremos as instruções para recuperação de senha")
+    view.reset_step = 2
+    view.app_controller.update_view()
+
+
+    payload = {
+        "email": email
+    }
+
