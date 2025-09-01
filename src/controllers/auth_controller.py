@@ -1,6 +1,7 @@
 from flet import ControlEvent
 from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
 import requests
+generate_code = None
 
 def register_click(e: ControlEvent, view):
     email = view.email_field.value or ""
@@ -86,6 +87,7 @@ def login_click(e: ControlEvent, view):
         print(f"Erro de conexão: {str(e)}")
 
 def send_code_click(e: ControlEvent, view):
+    global generate_code
     email = view.reset_email_field.value or ""
 
     print(email)
@@ -97,12 +99,62 @@ def send_code_click(e: ControlEvent, view):
         view.app_controller.show_snackbar("Email inválido", error=True)
         return
     
-    view.app_controller.show_snackbar(f"Se o e-mail estiver cadastrado, enviaremos as instruções para recuperação de senha")
+
+    generate_code = generate_verification_code()
+
+    print(f"Código gerado: {generate_code}")
+
+    view.app_controller.show_snackbar(f"Se o e-mail estiver cadastrado, enviaremos as instruções para recuperação de senha.")
+
     view.reset_step = 2
     view.app_controller.update_view()
 
+def verify_code_click(e: ControlEvent, view):
+    code = view.verification_code_field.value or ""
 
+    if not code:
+        view.app_controller.show_snackbar("Digite o código de verificação", error=True)
+        return
+
+    if code != generate_code:
+        view.app_controller.show_snackbar("Código inválido", error=True)
+        return
+
+    view.reset_step = 3
+    view.app_controller.update_view()
+
+def resend_code_click(e: ControlEvent, view):
+    global generate_code
+    generate_code = generate_verification_code()
+
+    print(f"Código reenviado: {generate_code}")
+
+    view.app_controller.show_snackbar("Novo código enviado. Verifique seu e-mail.")
+
+def reset_password_click(e: ControlEvent, view):
+    new_password = view.new_password_field.value or ""
+    confirm_new_password = view.confirm_new_password_field.value or ""
+
+    print('email:', view.reset_email_field.value)
+
+    if not new_password or not confirm_new_password:
+        view.app_controller.show_snackbar("Preencha todos os campos", error=True)
+        return
+
+    if not validate_password_length(new_password):
+        view.app_controller.show_snackbar("A senha deve ter pelo menos 6 caracteres", error=True)
+        return
+
+    if not passwords_match(new_password, confirm_new_password):
+        view.app_controller.show_snackbar("As senhas não coincidem", error=True)
+        return
+    
+    
     payload = {
-        "email": email
+        "email": view.current_reset_email,
+        "new_password": new_password
     }
 
+    view.app_controller.show_snackbar("Senha alterada com sucesso!")
+    view.reset_step = 1
+    view.app_controller.navigate_to("login")

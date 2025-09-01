@@ -1,7 +1,7 @@
 import flet as ft
 from ..components.ui_components import UIComponents
 from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
-from ..controllers.auth_controller import send_code_click
+from ..controllers.auth_controller import send_code_click, verify_code_click,resend_code_click, reset_password_click
 
 class ForgotPasswordView:
     def __init__(self, app_controller):
@@ -47,9 +47,9 @@ class ForgotPasswordView:
             ft.Container(height=20),
             self.verification_code_field,
             ft.Container(height=20),
-            UIComponents.create_button("Verificar Código", self._on_verify_code_click),
+            UIComponents.create_button("Verificar Código", lambda e: verify_code_click(e, self)),
             ft.Container(height=10),
-            UIComponents.create_text_button("Reenviar Código", self._on_resend_code_click),
+            UIComponents.create_text_button("Reenviar Código", lambda e: resend_code_click(e, self)),
             ft.Container(height=15),
             UIComponents.create_text_button("← Voltar ao Login", self._on_back_to_login_click),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
@@ -67,7 +67,7 @@ class ForgotPasswordView:
             self.new_password_field,
             self.confirm_new_password_field,
             ft.Container(height=20),
-            UIComponents.create_button("Alterar Senha", self._on_reset_password_click),
+            UIComponents.create_button("Alterar Senha", lambda e: reset_password_click(e, self)),
         ], horizontal_alignment=ft.CrossAxisAlignment.CENTER)
         
         return UIComponents.create_container(content)
