@@ -11,14 +11,13 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @auth_router.post("/register")
-async def register(usuario_schema: UserSchemas, session: Session = Depends(get_session)):
-    '''Rota de registro'''
+async def register(user_schema: UserSchemas, session: Session = Depends(get_session)):
     try:
-        if session.query(User).filter(User.email == usuario_schema.email).first():
+        if session.query(User).filter(User.email == user_schema.email).first():
             raise HTTPException(status_code=400, detail='E-mail do usuário já cadastrado')
         else:
-            password_encrypted = bcrypt_context.hash(usuario_schema.password)
-            new_user = User(usuario_schema.email, password_encrypted)
+            password_encrypted = bcrypt_context.hash(user_schema.password)
+            new_user = User(user_schema.email, password_encrypted)
             session.add(new_user)
             session.commit()
             return {"message": "User registered successfully"}
@@ -39,13 +38,19 @@ async def login(login_schema: LoginSchemas, session = Depends(get_session)):
                 "refresh_token": refresh_token,
                 "token_type": "Bearer"}
     
-@auth_router.post('/forgot-password')
-async def forgot_password(email: str, session: Session = Depends(get_session)):
-    user = session.query(User).filter(User.email == email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail='Usuário não encontrado')
-    
-    # Aqui você pode implementar a lógica para enviar o e-mail de redefinição de senha
-    # Por exemplo, gerar um código de verificação e enviá-lo por e-mail
-    
-    return {"message": "E-mail de redefinição de senha enviado com sucesso"}
+@auth_router.post('/reset_password')
+async def reset_password(user_schema: UserSchemas, session: Session = Depends(get_session)):
+    try:
+        user = session.query(User).filter(User.email == user_schema.email).first()
+
+        if not user:
+            raise HTTPException(status_code=404, detail='Email não encontrado')
+        else:
+            password_encrypted = bcrypt_context.hash(user_schema.password)
+            user.password = password_encrypted
+            session.commit()
+            return {"message": "Senha atualizada com sucesso"}
+            
+    except Exception as e:
+        session.rollback()
+        return {"error": str(e)}

@@ -43,10 +43,6 @@ def register_click(e: ControlEvent, view):
         url = 'http://127.0.0.1:8000/auth/register'
         response = requests.post(url, json=payload)
 
-        print('Status:', response.status_code)
-        print('Resposta:', response.json())
-
-
         view.app_controller.navigate_to("login")
     else:
         view.app_controller.show_snackbar("Erro ao cadastrar usuário", error=True)
@@ -94,8 +90,6 @@ def send_code_click(e: ControlEvent, view):
 
     email = view.reset_email_field.value or ""
 
-    print(email)
-
     if not email:
         view.app_controller.show_snackbar("Digite seu email", error=True)
         return
@@ -104,7 +98,6 @@ def send_code_click(e: ControlEvent, view):
         return 
     generate_code = generate_verification_code()
 
-    print(f"Código gerado: {generate_code}")
 
     if smtp_send_code(generate_code, email):
         print("E-mail enviado com sucesso!")
@@ -143,15 +136,11 @@ def resend_code_click(e: ControlEvent, view):
         view.app_controller.show_snackbar("Erro ao enviar e-mail. Tente novamente mais tarde.", error=True)
         return
 
-    print(f"Código reenviado: {generate_code}")
-
     view.app_controller.show_snackbar("Novo código enviado. Verifique seu e-mail.")
 
 def reset_password_click(e: ControlEvent, view):
     new_password = view.new_password_field.value or ""
     confirm_new_password = view.confirm_new_password_field.value or ""
-
-    print('email:', view.reset_email_field.value)
 
     if not new_password or not confirm_new_password:
         view.app_controller.show_snackbar("Preencha todos os campos", error=True)
@@ -167,9 +156,12 @@ def reset_password_click(e: ControlEvent, view):
     
     
     payload = {
-        "email": view.current_reset_email,
-        "new_password": new_password
+        "email": view.reset_email_field.value,
+        "password": new_password
     }
+    url = 'http://127.0.0.1:8000/auth/reset_password'
+    response = requests.post(url, json=payload)
+
 
     view.app_controller.show_snackbar("Senha alterada com sucesso!")
     view.reset_step = 1
