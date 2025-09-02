@@ -1,6 +1,10 @@
 from flet import ControlEvent
-from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
 import requests
+import smtplib
+import os
+from dotenv import load_dotenv
+from ..utils.validators import validate_email, validate_password_length, passwords_match, generate_verification_code
+
 generate_code = None
 
 def register_click(e: ControlEvent, view):
@@ -88,6 +92,10 @@ def login_click(e: ControlEvent, view):
 
 def send_code_click(e: ControlEvent, view):
     global generate_code
+    load_dotenv()
+    sender = os.getenv("EMAIL")
+    app_password = os.getenv("APP_PASSWORD")
+
     email = view.reset_email_field.value or ""
 
     print(email)
@@ -97,13 +105,34 @@ def send_code_click(e: ControlEvent, view):
         return
     if not validate_email(email):
         view.app_controller.show_snackbar("Email inválido", error=True)
-        return
-    
-
+        return 
     generate_code = generate_verification_code()
 
     print(f"Código gerado: {generate_code}")
 
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+
+            smtp.login(sender, app_password)
+
+            subject = 'Código de verificação'
+            body = f'Seu código de verificação é: {generate_code}'
+
+            msg = f'Subject: {subject}\n\n{body}'
+
+            smtp.sendmail(
+                sender,
+                email,
+                msg
+            )
+            print("E-mail enviado com sucesso!")
+    except Exception as e:
+        print(f"Erro ao enviar e-mail: {str(e)}")
+        view.app_controller.show_snackbar("Erro ao enviar e-mail. Tente novamente mais tarde.", error=True)
+        return
     view.app_controller.show_snackbar(f"Se o e-mail estiver cadastrado, enviaremos as instruções para recuperação de senha.")
 
     view.reset_step = 2
