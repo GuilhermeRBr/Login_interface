@@ -49,7 +49,7 @@ async def reset_password(user_schema: UserSchemas, session: Session = Depends(ge
             password_encrypted = bcrypt_context.hash(user_schema.password)
             user.password = password_encrypted
             session.commit()
-            return {"message": "Senha atualizada com sucesso"}
+            return {"message": "Password updated successfully"}
             
     except Exception as e:
         session.rollback()

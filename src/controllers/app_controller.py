@@ -1,5 +1,4 @@
 import flet as ft
-from ..models.user import UserModel
 from ..ui.login_view import LoginView
 from ..ui.register_view import RegisterView
 from ..ui.forgot_password_view import ForgotPasswordView
@@ -13,9 +12,6 @@ class AppController:
 
         self.page = None
         self.current_view = "login"
-        
-        self.user_model = UserModel()
-        
         self.login_view = LoginView(self)
         self.register_view = RegisterView(self)
         self.forgot_password_view = ForgotPasswordView(self)

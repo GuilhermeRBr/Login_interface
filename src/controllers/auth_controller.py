@@ -11,8 +11,6 @@ def register_click(e: ControlEvent, view):
     password = view.password_field.value or ""
     confirm_password = view.confirm_password_field.value or ""
 
-    print(email, password, confirm_password)
-
     if not email or not password or not confirm_password:
         view.app_controller.show_snackbar("Preencha todos os campos", error=True)
         return
@@ -51,8 +49,6 @@ def login_click(e: ControlEvent, view):
     email = view.email_field.value or ""
     password = view.password_field.value or ""
 
-    print(email, password)
-
     if not email or not password:
         view.app_controller.show_snackbar("Preencha todos os campos", error=True)
         return
@@ -74,7 +70,6 @@ def login_click(e: ControlEvent, view):
         if response.status_code == 200:
             view.app_controller.show_snackbar("Login realizado com sucesso!")
             print('Resposta:', response.json())
-            # Aqui você pode armazenar o token de acesso ou realizar outras ações necessárias
             view.app_controller.logged_user_email = email
             view.app_controller.navigate_to("homepage")
         elif response.status_code == 401:
@@ -99,9 +94,7 @@ def send_code_click(e: ControlEvent, view):
     generate_code = generate_verification_code()
 
 
-    if smtp_send_code(generate_code, email):
-        print("E-mail enviado com sucesso!")
-    else:
+    if not smtp_send_code(generate_code, email):
         view.app_controller.show_snackbar("Erro ao enviar e-mail. Tente novamente mais tarde.", error=True)
         return
 
@@ -130,9 +123,7 @@ def resend_code_click(e: ControlEvent, view):
     generate_code = generate_verification_code()
     email = view.reset_email_field.value or ""
 
-    if smtp_send_code(generate_code, email):
-        print("E-mail enviado com sucesso!")
-    else:
+    if not smtp_send_code(generate_code, email):
         view.app_controller.show_snackbar("Erro ao enviar e-mail. Tente novamente mais tarde.", error=True)
         return
 
