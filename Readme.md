@@ -50,14 +50,11 @@ Aplicação de login com recuperação de senha via e-mail, desenvolvida com **F
    flet run main.py
 
 <p align="center">
-    <img src="src/assets/images/login.png" width="322" height="455"/>
-    <img src="src/assets/images/loged.png" width="322" height="455"/>
-    <img src="src/assets/images/register.png" width="322" height="455"/>
-    <img src="src/assets/images/code.png" width="322" height="455"/>
-    <img src="src/assets/images/verification.png" width="322" height="455"/>
-    <img src="src/assets/images/reset.png" width="322" height="455"/>
-
+    <img src="src/assets/images/login.png" width="322"/>
+    <img src="src/assets/images/loged.png" width="322"/>
+    <img src="src/assets/images/register.png" width="322"/>
+    <img src="src/assets/images/code.png" width="322"/>
+    <img src="src/assets/images/verification.png" width="322"/>
+    <img src="src/assets/images/reset.png" width="322"/>
 </p>
-
-
 
