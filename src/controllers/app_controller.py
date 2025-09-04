@@ -26,8 +26,8 @@ class AppController:
         page.title = "Sistema de Login"
         page.theme_mode = ft.ThemeMode.LIGHT
         page.bgcolor = Colors.WHITE
-        page.window.width = 450
-        page.window.height = 650
+        page.window.width = 500
+        page.window.height = 700
         page.window.resizable = False
         page.vertical_alignment = ft.MainAxisAlignment.CENTER
         page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -52,8 +52,8 @@ class AppController:
             width=self.page.width,
             height=self.page.height,
             gradient=ft.LinearGradient([
-                ft.Colors.with_opacity(0.1, Colors.PURPLE_DARK),
-                ft.Colors.with_opacity(0.05, Colors.BLUE_LIGHT),
+                ft.Colors.with_opacity(0.1, "PURPLE"),
+                ft.Colors.with_opacity(0.05, 'BLUE'),
             ]),
         )
         
