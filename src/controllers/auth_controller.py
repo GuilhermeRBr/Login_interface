@@ -26,24 +26,22 @@ def register_click(e: ControlEvent, view):
     if not passwords_match(password, confirm_password):
         view.app_controller.show_snackbar("As senhas não coincidem", error=True)
         return
+    payload = {
+        "email": email,
+        "password": password
+    }
+    url = 'http://127.0.0.1:8000/auth/register'
 
-    if view.app_controller.user_model.user_exists(email):
-        view.app_controller.show_snackbar("Email já cadastrado", error=True)
-        return
+    response = requests.post(url, json=payload)
 
-    if view.app_controller.user_model.create_user(email, password):
-        view.app_controller.show_snackbar("Usuário cadastrado com sucesso!")
-
-        payload = {
-            "email": email,
-            "password": password
-        }
-        url = 'http://127.0.0.1:8000/auth/register'
-        response = requests.post(url, json=payload)
-
-        view.app_controller.navigate_to("login")
+    if response.status_code == 400:
+        view.app_controller.show_snackbar("E-mail do usuário já cadastrado", error=True)
+    if response.status_code == 500:
+        view.app_controller.show_snackbar("Erro ao registrar usuário", error=True)
     else:
-        view.app_controller.show_snackbar("Erro ao cadastrar usuário", error=True)
+        view.app_controller.show_snackbar("Usuário cadastrado com sucesso!")
+        view.app_controller.logged_user_email = email
+        view.app_controller.navigate_to("login")
 
 def login_click(e: ControlEvent, view):
     email = view.email_field.value or ""
@@ -64,21 +62,17 @@ def login_click(e: ControlEvent, view):
 
     url = 'http://127.0.0.1:8000/auth/login'
 
-    try:
-        response = requests.post(url, json=payload)
+    response = requests.post(url, json=payload)
 
-        if response.status_code == 200:
-            view.app_controller.show_snackbar("Login realizado com sucesso!")
-            print('Resposta:', response.json())
-            view.app_controller.logged_user_email = email
-            view.app_controller.navigate_to("homepage")
-        elif response.status_code == 401:
-            view.app_controller.show_snackbar("Email ou senha incorretos", error=True)
-        else:
-            view.app_controller.show_snackbar("Erro ao realizar login", error=True)
-    except requests.exceptions.RequestException as e:
-        view.app_controller.show_snackbar("Erro de conexão com o servidor", error=True)
-        print(f"Erro de conexão: {str(e)}")
+    if response.status_code == 200:
+        view.app_controller.show_snackbar("Login realizado com sucesso!")
+        print('Resposta:', response.json())
+        view.app_controller.logged_user_email = email
+        view.app_controller.navigate_to("homepage")
+    elif response.status_code == 401:
+        view.app_controller.show_snackbar("Email ou senha incorretos", error=True)
+    elif response.status_code == 500:
+        view.app_controller.show_snackbar("Erro ao realizar login", error=True)
 
 def send_code_click(e: ControlEvent, view):
     global generate_code
@@ -91,8 +85,8 @@ def send_code_click(e: ControlEvent, view):
     if not validate_email(email):
         view.app_controller.show_snackbar("Email inválido", error=True)
         return 
+    
     generate_code = generate_verification_code()
-
 
     if not smtp_send_code(generate_code, email):
         view.app_controller.show_snackbar("Erro ao enviar e-mail. Tente novamente mais tarde.", error=True)
@@ -151,9 +145,14 @@ def reset_password_click(e: ControlEvent, view):
         "password": new_password
     }
     url = 'http://127.0.0.1:8000/auth/reset_password'
+
     response = requests.post(url, json=payload)
 
-
-    view.app_controller.show_snackbar("Senha alterada com sucesso!")
-    view.reset_step = 1
-    view.app_controller.navigate_to("login")
+    if response.status_code == 404:
+        view.app_controller.show_snackbar("Email não encontrado", error=True)
+    elif response.status_code == 500:
+        view.app_controller.show_snackbar("Erro ao atualizar senha", error=True)
+    else:
+        view.app_controller.show_snackbar("Senha alterada com sucesso!")
+        view.reset_step = 1
+        view.app_controller.navigate_to("login")

@@ -25,7 +25,9 @@ class AppController:
   
         page.title = "Sistema de Login"
         page.theme_mode = ft.ThemeMode.LIGHT
-        page.bgcolor = Colors.WHITE
+        page.bgcolor = None
+        page.padding = 0
+        page.spacing = 0
         page.window.width = 500
         page.window.height = 700
         page.window.resizable = False
@@ -44,13 +46,14 @@ class AppController:
         self.page.controls.clear()
         
         main_container = ft.Container(
+            expand=True,
             content=ft.Column([
                 ft.Container(height=50), 
                 self._get_current_view(),
                 ft.Container(height=50), 
-            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
-            width=self.page.width,
-            height=self.page.height,
+            ],
+                alignment=ft.MainAxisAlignment.CENTER,
+             horizontal_alignment=ft.CrossAxisAlignment.CENTER),
             gradient=ft.LinearGradient([
                 ft.Colors.with_opacity(0.1, "PURPLE"),
                 ft.Colors.with_opacity(0.05, 'BLUE'),

@@ -12,20 +12,19 @@ auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.post("/register")
 async def register(user_schema: UserSchemas, session: Session = Depends(get_session)):
+    if session.query(User).filter(User.email == user_schema.email).first():
+        raise HTTPException(status_code=400, detail='E-mail do usuário já cadastrado')
     try:
-        if session.query(User).filter(User.email == user_schema.email).first():
-            raise HTTPException(status_code=400, detail='E-mail do usuário já cadastrado')
-        else:
-            password_encrypted = bcrypt_context.hash(user_schema.password)
-            new_user = User(user_schema.email, password_encrypted)
-            session.add(new_user)
-            session.commit()
-            return {"message": "User registered successfully"}
+        password_encrypted = bcrypt_context.hash(user_schema.password)
+        new_user = User(user_schema.email, password_encrypted)
+        session.add(new_user)
+        session.commit()
+        return {"message": "User registered successfully"}
     except Exception as e:
         session.rollback()
-        return {"error": str(e)}
-    
+        raise HTTPException(status_code=500, detail='Erro ao registrar usuário')
 
+    
 @auth_router.post('/login')
 async def login(login_schema: LoginSchemas, session = Depends(get_session)):
     user = authenticate_user(login_schema.email, login_schema.password, session)
@@ -40,17 +39,17 @@ async def login(login_schema: LoginSchemas, session = Depends(get_session)):
     
 @auth_router.post('/reset_password')
 async def reset_password(user_schema: UserSchemas, session: Session = Depends(get_session)):
-    try:
-        user = session.query(User).filter(User.email == user_schema.email).first()
 
-        if not user:
-            raise HTTPException(status_code=404, detail='Email não encontrado')
-        else:
-            password_encrypted = bcrypt_context.hash(user_schema.password)
-            user.password = password_encrypted
-            session.commit()
-            return {"message": "Password updated successfully"}
+    user = session.query(User).filter(User.email == user_schema.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail='Email não encontrado')
+    
+    try:
+        password_encrypted = bcrypt_context.hash(user_schema.password)
+        user.password = password_encrypted
+        session.commit()
+        return {"message": "Password updated successfully"}
             
     except Exception as e:
         session.rollback()
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail='Erro ao atualizar senha')
